@@ -163,6 +163,3 @@ github-card-generator/
 
 ---
 
-## License
-
-MIT
