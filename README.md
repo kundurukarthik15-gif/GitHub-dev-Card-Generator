@@ -2,7 +2,17 @@
 
 Generate beautiful, AI-powered developer identity cards from any public GitHub profile.
 
-![Screenshot](github-card-generator/frontend/assets/Card-1.png)
+![GitHub Dev Card Generator](./Screenshot%202026-05-17%20092339.png)
+
+## 🔗 Live Demo
+
+🌐 **Deploy Link:**  
+https://github-card-frontend-4633861684.us-central1.run.app/
+
+💻 **GitHub Repository:**  
+https://github.com/kundurukarthik15-gif/github-dev-card-generator
+
+---
 
 ## What it does
 
@@ -16,6 +26,8 @@ Enter a GitHub username → the app fetches the profile via the GitHub API, send
 
 Cards can be downloaded as **PNG**, exported as **PDF**, or shared via a **QR code**.
 
+---
+
 ## Themes
 
 | Theme | Preview |
@@ -23,6 +35,20 @@ Cards can be downloaded as **PNG**, exported as **PDF**, or shared via a **QR co
 | 🌑 Dark | GitHub-inspired dark |
 | ☀️ Light | Clean light mode |
 | ⚡ Neon | Cyberpunk green glow |
+
+---
+
+## 🖼️ Screenshots
+
+| | | |
+|---|---|---|
+| ![](./Screenshot%202026-05-17%20092339.png) | ![](./Screenshot%202026-05-17%20092339\(1\).png) | ![](./Screenshot%202026-05-17%20092424.png) |
+
+| |
+|---|
+| ![](./Screenshot%202026-05-17%20092501.png) |
+
+---
 
 ## Tech Stack
 
@@ -35,19 +61,21 @@ Cards can be downloaded as **PNG**, exported as **PDF**, or shared via a **QR co
 | Export | html2canvas, jsPDF |
 | Infra | Docker + Docker Compose |
 
+---
+
 ## Getting Started
 
 ### Prerequisites
 
 - Docker & Docker Compose
-- A [Google Gemini API key](https://aistudio.google.com/app/apikey)
+- A Google Gemini API key
 - (Optional) A GitHub personal access token for higher rate limits
 
 ### Setup
 
 1. Clone the repo:
    ```bash
-   git clone https://github.com/<kundurukarthik15-gif>/github-dev-card-generator.git
+   git clone https://github.com/kundurukarthik15-gif/github-dev-card-generator.git
    cd github-dev-card-generator/github-card-generator
    ```
 
@@ -67,9 +95,14 @@ Cards can be downloaded as **PNG**, exported as **PDF**, or shared via a **QR co
    docker-compose up --build
    ```
 
-5. Open [http://localhost:8080](http://localhost:5000) in your browser.
+5. Open:
+   ```txt
+   http://localhost:8080
+   ```
 
-### Running without Docker
+---
+
+## Running without Docker
 
 ```bash
 cd backend
@@ -78,6 +111,8 @@ uvicorn main:app --host 0.0.0.0 --port 8080
 ```
 
 Then open `frontend/index.html` directly in your browser.
+
+---
 
 ## API Reference
 
@@ -98,27 +133,35 @@ Then open `frontend/index.html` directly in your browser.
 
 Response includes `card_url`, `vibe`, and `theme`.
 
+---
+
 ## Project Structure
 
-```
+```bash
 github-card-generator/
 ├── backend/
-│   ├── main.py          # FastAPI app & routes
-│   ├── agent.py         # Orchestration logic
-│   ├── mcp_server.py    # GitHub scraping, Gemini AI, HTML generation
+│   ├── main.py
+│   ├── agent.py
+│   ├── mcp_server.py
 │   ├── requirements.txt
 │   └── Dockerfile
 ├── frontend/
-│   ├── index.html       # Single-page UI
+│   ├── index.html
 │   └── Dockerfile
 └── docker-compose.yml
 ```
 
-## Screenshots
+---
 
-| | | |
-|---|---|---|
-| ![](github-card-generator/frontend/assets/Card-1.png) | ![](github-card-generator/frontend/assets/Card-2.png) | ![](github-card-generator/frontend/assets/Card-3.png) |
+## 🚀 Future Improvements
+
+- Multiple card layouts
+- Animated themes
+- Social media integration
+- AI-generated portfolio summaries
+- Public shareable profile pages
+
+---
 
 ## License
 
