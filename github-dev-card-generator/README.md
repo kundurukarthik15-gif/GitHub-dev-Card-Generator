@@ -47,7 +47,7 @@ Cards can be downloaded as **PNG**, exported as **PDF**, or shared via a **QR co
 
 1. Clone the repo:
    ```bash
-   git clone https://github.com/<your-username>/github-dev-card-generator.git
+   git clone https://github.com/<kundurukarthik15-gif>/github-dev-card-generator.git
    cd github-dev-card-generator/github-card-generator
    ```
 
