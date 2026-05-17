@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>kundurukarthik15-gif | Dev Card</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 30px; }
+</style>
+</head>
+<body>
+<style>
+  .dev-card {
+    width: 420px;
+    padding: 28px;
+    border-radius: 24px;
+    background: rgba(22,27,34,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+    color: #f0f6fc;
+    position: relative;
+    overflow: hidden;
+    font-family: 'Inter', Arial, sans-serif;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .dev-card:hover {
+    transform: translateY(-6px) scale(1.015);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+  .dev-card .glow {
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 220px; height: 220px;
+    background: radial-gradient(circle, rgba(88,166,255,0.3), transparent 70%);
+    pointer-events: none;
+  }
+  .dev-card .avatar {
+    width: 76px; height: 76px;
+    border-radius: 50%;
+    border: 3px solid rgba(255,255,255,0.08);
+    object-fit: cover;
+  }
+  .dev-card .header { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
+  .dev-card .name { font-size: 1.25rem; font-weight: 800; }
+  .dev-card .handle { opacity: 0.6; font-size: 0.9rem; margin-top: 2px; }
+  .dev-card .bio { line-height: 1.6; opacity: 0.85; font-size: 0.92rem; margin-bottom: 16px; }
+  .dev-card .vibe { font-style: italic; opacity: 0.9; line-height: 1.6; font-size: 0.92rem; margin-bottom: 18px; }
+  .dev-card .tags { margin-bottom: 18px; }
+  .dev-card .tag {
+    display: inline-block;
+    padding: 5px 12px; margin: 3px;
+    background: rgba(88,166,255,0.15);
+    color: #58a6ff;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  .dev-card .stats {
+    display: flex;
+    justify-content: space-around;
+    padding: 14px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.04);
+    margin-bottom: 18px;
+    font-size: 0.88rem;
+  }
+  .dev-card .stat-item { text-align: center; }
+  .dev-card .stat-value { font-size: 1.2rem; font-weight: 800; }
+  .dev-card .stat-label { opacity: 0.6; font-size: 0.75rem; margin-top: 2px; }
+  .dev-card .repos-title { font-weight: 700; margin-bottom: 10px; font-size: 0.9rem; }
+  .dev-card ul { padding-left: 18px; line-height: 1.8; font-size: 0.88rem; }
+  .dev-card .fun-fact {
+    font-size: 0.82rem;
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    opacity: 0.8;
+    line-height: 1.5;
+  }
+</style>
+<div class="dev-card" data-bg="#0d1117">
+  <div class="glow"></div>
+  <div class="header">
+    <img class="avatar" src="https://avatars.githubusercontent.com/u/233561283?v=4" alt="avatar">
+    <div>
+      <div class="name">karthik kunduru</div>
+      <div class="handle">@kundurukarthik15-gif</div>
+      
+    </div>
+  </div>
+  <p class="bio">👨‍💻 Student Developer | Exploring AI, Web Dev & Data Science | Projects in Flask, Python & JS | Turning ideas into impactful code 💡
+</p>
+  <p class="vibe">"A passionate developer building cool things."</p>
+  <div class="tags"><span class="tag">HTML</span><span class="tag">CSS</span></div>
+  <div class="stats">
+    <div class="stat-item">
+      <div class="stat-value">12</div>
+      <div class="stat-label">Repos</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value">3</div>
+      <div class="stat-label">Followers</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value">2</div>
+      <div class="stat-label">Languages</div>
+    </div>
+  </div>
+  <div class="repos-title">🔥 Top Projects</div>
+  <ul><li><b>Smart-Helmet-Based-Bike-Ignition-System-Using-Bluetooth</b> &nbsp;<span style="opacity:0.6;">(0 ⭐ · HTML)</span></li><li><b>OpportUnityHub-Smart-Opportunity-Tracker</b> &nbsp;<span style="opacity:0.6;">(0 ⭐ · HTML)</span></li><li><b>Karthik-Portfolio-Website</b> &nbsp;<span style="opacity:0.6;">(0 ⭐ · CSS)</span></li></ul>
+  <p class="fun-fact"><b>💡 Fun Fact:</b> Has 12 public repositories.</p>
+</div>
+</body>
+</html>

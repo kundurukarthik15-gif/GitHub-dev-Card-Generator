@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GitHub Dev Card Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ─── Reset & Base ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #0a0c10;
+      --surface:      #11141a;
+      --border:       #262b32;
+      --text:         #e6edf3;
+      --text-sub:     #8b949e;
+      --accent:       #238636;
+      --accent-hover: #2ea043;
+      --accent-glow:  rgba(46,160,67,0.4);
+      --error:        #f85149;
+      --radius:       16px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      background-image:
+        radial-gradient(circle at 15% 50%, rgba(88, 166, 255, 0.04), transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(35, 134, 54, 0.04), transparent 25%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 20px 80px;
+    }
+
+    /* ─── Page Header ───────────────────────────────────────────── */
+    .page-header { text-align: center; margin-bottom: 40px; animation: fadeIn 0.8s ease-out; }
+
+    .page-header h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      background: linear-gradient(135deg, #ffffff 0%, #58a6ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+    }
+
+    .page-header p {
+      color: var(--text-sub);
+      font-size: 1.05rem;
+      max-width: 500px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+
+    /* ─── Error Box ─────────────────────────────────────────────── */
+    #error-box {
+      display: none;
+      width: 100%;
+      max-width: 580px;
+      background: rgba(248,81,73,0.1);
+      border: 1px solid rgba(248,81,73,0.4);
+      color: #ff7b72;
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 0.95rem;
+      text-align: left;
+      margin-bottom: 24px;
+      animation: slideUp 0.3s ease-out;
+    }
+
+    /* ─── Input Panel ───────────────────────────────────────────── */
+    .input-panel {
+      width: 100%;
+      max-width: 580px;
+      background: rgba(17, 20, 26, 0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      margin-bottom: 32px;
+      transition: border-color 0.3s ease;
+      animation: slideUp 0.6s ease-out;
+    }
+    
+    .input-panel:focus-within {
+      border-color: #58a6ff;
+    }
+
+    .input-panel select {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 500;
+      outline: none;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+
+    .input-panel select:hover { background: rgba(255, 255, 255, 0.08); }
+
+    .input-panel input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 1.05rem;
+      padding: 12px;
+      outline: none;
+      min-width: 0;
+    }
+
+    .input-panel input::placeholder { color: var(--text-sub); }
+
+    .btn-generate {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 26px;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .btn-generate:hover:not(:disabled) {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px var(--accent-glow);
+    }
+
+    .btn-generate:active:not(:disabled) { transform: translateY(0); box-shadow: 0 2px 10px var(--accent-glow); }
+
+    .btn-generate:disabled {
+      background: var(--border);
+      color: var(--text-sub);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* ─── Skeleton Loader ───────────────────────────────────────── */
+    #loading {
+      display: none;
+      width: 100%;
+      max-width: 420px;
+      background: rgba(17, 20, 26, 0.6);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      animation: pulse 1.5s ease-in-out infinite;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; }
+      50%       { opacity: 1;   }
+    }
+
+    .sk-row   { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+    .sk-circle{ width: 70px; height: 70px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
+    .sk-lines { flex: 1; display: flex; flex-direction: column; gap: 12px; }
+    .sk-line  { height: 12px; background: var(--border); border-radius: 6px; }
+    .sk-line.w60 { width: 60%; }
+    .sk-line.w40 { width: 40%; }
+    .sk-line.w80 { width: 80%; }
+    .sk-line.w50 { width: 50%; }
+
+    /* ─── Result Section ────────────────────────────────────────── */
+    #result-section {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+      width: 100%;
+      max-width: 600px;
+      animation: fadeScaleUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+
+    @keyframes fadeScaleUp {
+      from { opacity: 0; transform: translateY(20px) scale(0.95); }
+      to   { opacity: 1; transform: translateY(0) scale(1);    }
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(15px); }
+      to   { opacity: 1; transform: translateY(0);    }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* ─── Card Display Area ─────────────────────────────────────── */
+    #card-display {
+      width: 100%;
+      min-height: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: visible;
+      position: relative;
+      z-index: 1;
+      padding: 10px;
+    }
+    
+    /* Responsive overrides for the injected card */
+    #card-display .dev-card {
+      max-width: 100% !important;
+      margin: 0 auto;
+    }
+
+    /* ─── Action Buttons ────────────────────────────────────────── */
+    .action-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .btn-action {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 10px 20px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-action:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: #58a6ff;
+      transform: translateY(-2px);
+    }
+
+    .btn-action:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    /* ─── QR Code ───────────────────────────────────────────────── */
+    #qr-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      background: rgba(17, 20, 26, 0.4);
+      padding: 20px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
+    #qr-box span {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      font-weight: 500;
+    }
+
+    #qr-canvas {
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+      padding: 8px;
+    }
+
+    /* ─── Responsive ────────────────────────────────────────────── */
+    @media (max-width: 560px) {
+      .input-panel { flex-direction: column; align-items: stretch; padding: 16px; }
+      .input-panel select, .btn-generate { width: 100%; }
+      .input-panel input { text-align: center; }
+      
+      .action-row { display: grid; grid-template-columns: 1fr 1fr; }
+      .action-row button:first-child { grid-column: span 2; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="page-header">
+    <h1>GitHub Dev Card</h1>
+    <p>Enter any public GitHub username to generate a beautiful identity card</p>
+  </header>
+
+  <!-- Error -->
+  <div id="error-box" role="alert"></div>
+
+  <!-- Input -->
+  <div class="input-panel">
+    <select id="theme-select" title="Choose theme">
+      <option value="dark">🌑 Dark</option>
+      <option value="light">☀️ Light</option>
+      <option value="neon">⚡ Neon</option>
+    </select>
+    <input
+      type="text"
+      id="username-input"
+      placeholder="e.g. torvalds"
+      spellcheck="false"
+      autocomplete="off"
+      aria-label="GitHub username"
+    >
+    <button class="btn-generate" id="generate-btn">Generate</button>
+  </div>
+
+  <!-- Skeleton loader -->
+  <div id="loading" role="status" aria-label="Generating card…">
+    <div class="sk-row">
+      <div class="sk-circle"></div>
+      <div class="sk-lines">
+        <div class="sk-line w60"></div>
+        <div class="sk-line w40"></div>
+      </div>
+    </div>
+    <div class="sk-line w80" style="margin-bottom:10px;"></div>
+    <div class="sk-line w50" style="margin-bottom:10px;"></div>
+    <div class="sk-line w80"></div>
+  </div>
+
+  <!-- Result: card + buttons + QR -->
+  <section id="result-section" aria-live="polite">
+    <!-- Card display container -->
+    <div id="card-display"></div>
+
+    <div class="action-row">
+      <button class="btn-action" id="btn-copy">🔗 Copy URL</button>
+      <button class="btn-action" id="btn-png">⬇️ Download PNG</button>
+      <button class="btn-action" id="btn-pdf">📄 Export PDF</button>
+    </div>
+
+    <div id="qr-box">
+      <span>Scan to open card</span>
+      <div id="qr-canvas"></div>
+    </div>
+  </section>
+
+  <!-- Third-party libs -->
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <script>
+    /* ═══════════════════════════════════════════════════════════════
+       CONFIG
+    ═══════════════════════════════════════════════════════════════ */
+    const BACKEND = "http://127.0.0.1:8080";
+
+    /* ═══════════════════════════════════════════════════════════════
+       STATE
+    ═══════════════════════════════════════════════════════════════ */
+    let cardUrl      = "";
+    let cardUsername = "";
+
+    /* ═══════════════════════════════════════════════════════════════
+       DOM REFS
+    ═══════════════════════════════════════════════════════════════ */
+    const usernameInput  = document.getElementById("username-input");
+    const themeSelect    = document.getElementById("theme-select");
+    const generateBtn    = document.getElementById("generate-btn");
+    const loadingEl      = document.getElementById("loading");
+    const resultSection  = document.getElementById("result-section");
+    const cardDisplay    = document.getElementById("card-display");
+    const errorBox       = document.getElementById("error-box");
+    const qrCanvas       = document.getElementById("qr-canvas");
+    const btnCopy        = document.getElementById("btn-copy");
+    const btnPng         = document.getElementById("btn-png");
+    const btnPdf         = document.getElementById("btn-pdf");
+
+    /* ═══════════════════════════════════════════════════════════════
+       HELPERS
+    ═══════════════════════════════════════════════════════════════ */
+    function showError(msg) {
+      errorBox.textContent = "⚠️ " + msg;
+      errorBox.style.display = "block";
+    }
+
+    function hideError() {
+      errorBox.style.display = "none";
+      errorBox.textContent   = "";
+    }
+
+    function setLoading(on) {
+      loadingEl.style.display    = on ? "block" : "none";
+      generateBtn.disabled       = on;
+      generateBtn.textContent    = on ? "Generating…" : "Generate";
+    }
+
+    /*
+     * FIX: injectCard fetches the FULL HTML document from the generated URL
+     * and intelligently extracts the card and its associated styles.
+     */
+    async function injectCard(cardUrl) {
+      try {
+        const response = await fetch(cardUrl);
+        if (!response.ok) throw new Error("Failed to load card HTML.");
+        const html = await response.text();
+
+        /* Clear previous card */
+        cardDisplay.innerHTML = "";
+
+        /* Remove previously injected styles */
+        document.querySelectorAll(".injected-card-style").forEach(el => el.remove());
+
+        /* Parse full document safely */
+        const doc = new DOMParser().parseFromString(html, "text/html");
+
+        /* Extract and inject ALL <style> tags containing .dev-card rules */
+        const styleEls = doc.querySelectorAll("style");
+        let stylesFound = false;
+        styleEls.forEach((styleEl) => {
+          if (styleEl.textContent.includes(".dev-card")) {
+            stylesFound = true;
+            const tag = document.createElement("style");
+            tag.className = "injected-card-style";
+            tag.textContent = styleEl.textContent;
+            document.head.appendChild(tag);
+          }
+        });
+
+        /* Fallback: if no specific .dev-card style block was found, just inject all styles from the head */
+        if (!stylesFound) {
+            doc.querySelectorAll("head style").forEach(styleEl => {
+                const tag = document.createElement("style");
+                tag.className = "injected-card-style";
+                tag.textContent = styleEl.textContent;
+                document.head.appendChild(tag);
+            });
+        }
+
+        /* Extract the actual card container */
+        const cardEl = doc.querySelector(".dev-card");
+        if (!cardEl) {
+          showError("The generated HTML does not contain a .dev-card element.");
+          return false;
+        }
+
+        /* Import and inject the node cleanly into the DOM */
+        cardDisplay.appendChild(document.importNode(cardEl, true));
+        return true;
+      } catch (err) {
+        showError(err.message);
+        return false;
+      }
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       GENERATE
+    ═══════════════════════════════════════════════════════════════ */
+    async function handleGenerate() {
+      const username = usernameInput.value.trim();
+      if (!username) { showError("Please enter a GitHub username."); return; }
+
+      hideError();
+      resultSection.style.display = "none";
+      setLoading(true);
+
+      try {
+        const res = await fetch(`${BACKEND}/generate`, {
+          method:  "POST",
+          headers: { "Content-Type": "application/json" },
+          body:    JSON.stringify({ username, theme: themeSelect.value }),
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.detail || `Server error ${res.status}`);
+        }
+
+        const data = await res.json();
+        if (!data.card_url) {
+          throw new Error("Backend did not return a card URL.");
+        }
+
+        /* Store state for download / copy */
+        cardUrl      = `${BACKEND}${data.card_url}`;
+        cardUsername = username;
+
+        /* Fetch the full HTML file and inject */
+        const ok = await injectCard(cardUrl);
+        if (!ok) return;
+
+        /* Generate QR code */
+        qrCanvas.innerHTML = "";
+        new QRCode(qrCanvas, { text: cardUrl, width: 120, height: 120, colorDark: "#0a0c10", colorLight: "#ffffff" });
+
+        /* Show result section */
+        resultSection.style.display = "flex";
+
+        /* Smooth scroll to card */
+        setTimeout(() => {
+          resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 100);
+
+      } catch (err) {
+        showError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       COPY URL
+    ═══════════════════════════════════════════════════════════════ */
+    btnCopy.addEventListener("click", () => {
+      if (!cardUrl) return;
+      navigator.clipboard.writeText(cardUrl).then(() => {
+        const orig = btnCopy.textContent;
+        btnCopy.textContent = "✅ Copied!";
+        setTimeout(() => (btnCopy.textContent = orig), 2000);
+      }).catch(() => showError("Clipboard access denied."));
+    });
+
+    /* ═══════════════════════════════════════════════════════════════
+       CAPTURE CARD
+    ═══════════════════════════════════════════════════════════════ */
+    async function captureCard() {
+      const card = cardDisplay.querySelector(".dev-card");
+      if (!card) { alert("Generate a card first!"); return null; }
+
+      const bg = card.dataset.bg || "#0d1117";
+
+      /* Offscreen container for clean html2canvas render */
+      const shell = document.createElement("div");
+      shell.style.cssText = [
+        "position:fixed",
+        "left:-9999px",
+        "top:0",
+        "padding:32px",
+        `background:${bg}`,
+        "border-radius:0",
+        "z-index:-1",
+        "display:flex",
+        "justify-content:center",
+        "align-items:center"
+      ].join(";");
+
+      // Clone the card so the original stays unchanged in the UI
+      shell.appendChild(card.cloneNode(true));
+      document.body.appendChild(shell);
+
+      try {
+        const canvas = await html2canvas(shell, {
+          scale:      2,
+          useCORS:    true,
+          allowTaint: false,
+          logging:    false,
+          backgroundColor: bg,
+        });
+        return canvas;
+      } finally {
+        document.body.removeChild(shell);
+      }
+    }
+
+    /* ─── Download PNG ──────────────────────────────────────────── */
+    btnPng.addEventListener("click", async () => {
+      const orig = btnPng.textContent;
+      btnPng.textContent = "⏳ Capturing…";
+      btnPng.disabled    = true;
+
+      const canvas = await captureCard();
+
+      btnPng.textContent = orig;
+      btnPng.disabled    = false;
+
+      if (!canvas) return;
+      const a      = document.createElement("a");
+      a.download   = `${cardUsername}-dev-card.png`;
+      a.href       = canvas.toDataURL("image/png");
+      a.click();
+    });
+
+    /* ─── Export PDF ────────────────────────────────────────────── */
+    btnPdf.addEventListener("click", async () => {
+      const orig = btnPdf.textContent;
+      btnPdf.textContent = "⏳ Exporting…";
+      btnPdf.disabled    = true;
+
+      const canvas = await captureCard();
+
+      btnPdf.textContent = orig;
+      btnPdf.disabled    = false;
+
+      if (!canvas) return;
+      const img        = canvas.toDataURL("image/png");
+      const { jsPDF }  = window.jspdf;
+      const pdf        = new jsPDF({
+        orientation: "portrait",
+        unit:        "px",
+        format:      [canvas.width, canvas.height],
+      });
+      pdf.addImage(img, "PNG", 0, 0, canvas.width, canvas.height);
+      pdf.save(`${cardUsername}-dev-card.pdf`);
+    });
+
+    /* ═══════════════════════════════════════════════════════════════
+       EVENT LISTENERS
+    ═══════════════════════════════════════════════════════════════ */
+    generateBtn.addEventListener("click", handleGenerate);
+
+    usernameInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") handleGenerate();
+    });
+  </script>
+</body>
+</html>
